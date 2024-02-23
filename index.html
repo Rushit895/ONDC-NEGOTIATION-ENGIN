@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONDC Negotiation Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #5d5099;
+            /* Violet background color */
+            color: #fff;
+            /* White text color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding-top: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            width: 300px;
+            background-color: #7855a8;
+            /* Violet card background color */
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            /* Scale up on hover */
+        }
+
+        .card img {
+            width: 100%;
+            /* Maintain the original image width */
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            color: #fff;
+            /* White text color */
+        }
+
+        .card p {
+            color: #ddd;
+            /* Light gray text color */
+            margin-top: 5px;
+        }
+
+        .card button {
+            width: 100%;
+            padding: 10px;
+            background-color: #f8b400;
+            /* Yellowish button color for contrast */
+            color: #5d5099;
+            /* Violet text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .card button:hover {
+            background-color: #d89900;
+            /* Darker shade on hover */
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #b48fe7;
+            /* Violet background color */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-width: 80%;
+            max-height: 80%;
+            overflow: auto;
+        }
+
+        .store-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .store-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: calc(43.33% - 20px);
+            margin-bottom: 20px;
+            background-color: #fff;
+            /* White card background color */
+            transition: transform 0.3s ease;
+        }
+
+        .store-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .store-card h3 {
+            font-size: 1.2rem;
+            margin-top: 0;
+        }
+
+        .store-card p {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .store-card button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .chat-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background-color: #7855a8;
+            /* Violet background color */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .chat-popup-header {
+            padding: 10px;
+            background-color: #5d5099;
+            /* Darker violet header color */
+            color: #fff;
+            /* White text color */
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .chat-popup-body {
+            padding: 10px;
+            max-height: 450px;
+            overflow-y: auto;
+            background-color: #fff;
+            /* White body background color */
+            border-radius: 8px;
+        }
+
+        .chat-popup-footer {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            background-color: #5d5099;
+            /* Darker violet footer color */
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 5px;
+            outline: none;
+        }
+
+        .send-button {
+            padding: 8px 15px;
+            background-color: #f8b400;
+            /* Yellowish button color for contrast */
+            color: #5d5099;
+            /* Violet text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .bot-message {
+            background-color: #9275ba;
+            /* Violet bot message background color */
+            color: #fff;
+            /* White text color */
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .user-message {
+            background-color: #f8b400;
+            /* Yellowish user message background color */
+            color: #5d5099;
+            /* Violet text color */
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            text-align: right;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.9rem;
+            color: #000000;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center; margin-top: 20px;">Welcome to ONDC Negotiation Engine</h1>
+    <div class="container">
+        <div class="card" onclick="showNearbyPrices('Smartphone')">
+            <img src="https://images-cdn.ubuy.co.in/634d031dba8fe623b47893cc-smart-phone-android-8-1-smartphone-hd.jpg"
+                alt="Product Image">
+            <h2>Smartphone</h2>
+            <p>Description: High-performance smartphone with latest features.</p>
+            <p>Price: ₹15,000 - ₹25,000</p>
+        </div>
+        <div class="card" onclick="showNearbyPrices('Laptop')">
+            <img src="https://in-media.apjonlinecdn.com/catalog/product/cache/b3b166914d87ce343d4dc5ec5117b502/c/0/c08192495_1_9.png"
+                alt="Product Image">
+            <h2>Laptop</h2>
+            <p>Description: Powerful laptop for work and entertainment.</p>
+            <p>Price: ₹30,000 - ₹50,000</p>
+        </div>
+        <!-- Add more cards for other products -->
+    </div>
+
+    <div class="popup" id="popup">
+        <button class="close-button" onclick="closePopup()">&times;</button>
+        <h2>Nearby Stores</h2>
+        <div id="nearbyPrices">
+            <!-- This div will display nearby store prices -->
+            <!-- You can dynamically populate this section with fetched data -->
+        </div>
+    </div>
+
+    <div class="chat-popup" id="chatPopup" style="display:none;">
+        <button class="close-button" onclick="closeChatPopup()">&times;</button>
+        <div class="chat-popup-header">
+            Chat with Bot
+        </div>
+        <div class="chat-popup-body" id="chatContainer"></div>
+        <div class="chat-popup-footer">
+            <input type="text" id="userMessage" class="chat-input" placeholder="Type your message...">
+            <button class="send-button" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStore = '';
+
+        function showNearbyPrices(productName) {
+            // Simulating fetching nearby prices from ONDC or another source
+            const nearbyStores = [{
+                    "name": "Poorvika",
+                    "price": 20000,
+                    "distance": "1.2 km",
+                    "address": "123 MG Road, Bangalore, India",
+                    "rating": 4.5,
+                    "openingHours": "9:00 AM - 7:00 PM"
+                },
+                {
+                    "name": "Samsung Store",
+                    "price": 21000,
+                    "distance": "0.8 km",
+                    "address": "456 Brigade Road, Bangalore, India",
+                    "rating": 4.2,
+                    "openingHours": "10:00 AM - 8:00 PM"
+                },
+                {
+                    "name": "Enkantika",
+                    "price": 22000,
+                    "distance": "2.5 km",
+                    "address": "789 Indiranagar, Bangalore, India",
+                    "rating": 4.7,
+                    "openingHours": "8:00 AM - 6:00 PM"
+                },
+                {
+                    "name": "Mobi World",
+                    "price": 23000,
+                    "distance": "3.0 km",
+                    "address": "321 Koramangala, Bangalore, India",
+                    "rating": 4.0,
+                    "openingHours": "9:00 AM - 7:00 PM"
+                }
+            ];
+
+            currentStore = productName;
+
+            const nearbyPricesDiv = document.getElementById('nearbyPrices');
+            nearbyPricesDiv.innerHTML = '';
+            let storeRow = document.createElement('div');
+            storeRow.classList.add('store-row');
+            nearbyStores.forEach((store, index) => {
+                const storeCard = `
+        <div class="store-card">
+            <h3>${store.name}</h3>
+            <p>Price: ₹${store.price}</p>
+            <p>Distance: ${store.distance}</p>
+            <p>Address: ${store.address}</p>
+            <p>Rating: ${store.rating}</p>
+            <p>Opening Hours: ${store.openingHours}</p>
+            <button
+                onclick="openChatPopup('${store.name}', ${store.price}, '${store.distance}', '${store.address}', ${store.rating})">Negotiate</button>
+        </div>
+        `;
+                storeRow.innerHTML += storeCard;
+                if ((index + 1) % 2 === 0 || index === nearbyStores.length -
+                    1) { // Adjusted to add 2 cards in a row
+                    nearbyPricesDiv.appendChild(storeRow);
+                    storeRow = document.createElement('div');
+                    storeRow.classList.add('store-row');
+                }
+            });
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function openChatPopup(storeName, price, distance, address, rating) {
+            document.getElementById('chatPopup').style.display = 'block';
+            // Set the placeholder as the negotiation hint
+            document.getElementById('userMessage').placeholder = `Negotiate with ${storeName}`;
+            // Display store details in chat
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = `
+        <div class="bot-message">Store Details:</div>
+        <div class="bot-message">
+            <p>Name: ${storeName}</p>
+            <p>Price: ₹${price}</p>
+            <p>Distance: ${distance}</p>
+            <p>Address: ${address}</p>
+            <p>Rating: ${rating}</p>
+        </div>`;
+        }
+
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function closeChatPopup() {
+            document.getElementById('chatPopup').style.display = 'none';
+        }
+
+        function sendMessage() {
+            const userMessage = document.getElementById('userMessage').value;
+            const chatContainer = document.getElementById('chatContainer');
+            if (userMessage.trim() === '') return;
+
+            // Display user message
+            chatContainer.innerHTML += `<div class="user-message">You: ${userMessage}</div>`;
+            document.getElementById('userMessage').value = ''; // Clear input field
+
+            // Simulate bot response with JSON data specific to the current store
+            const botResponse = {
+                message: `We will send your request to the seller about your  ${currentStore} and they will Contact back you you. \n Below are the details of your item:`,
+                details: {
+                    price: "₹20,000",
+                    distance: "1.2 km",
+                    address: "123 Main Street",
+                    rating: "4.5"
+                }
+            };
+
+            // Display bot response
+            chatContainer.innerHTML += `<div class="bot-message">${botResponse.message}</div>`;
+            chatContainer.innerHTML += `
+                <div class="bot-message">
+                    <p>Price: ${botResponse.details.price}</p>
+                    <p>Distance: ${botResponse.details.distance}</p>
+                    <p>Address: ${botResponse.details.address}</p>
+                    <p>Rating: ${botResponse.details.rating}</p>
+                </div>`;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>
