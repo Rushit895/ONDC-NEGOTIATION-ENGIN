@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ONDC Negotiation Engine</title>
     <style>
+        /* Common styles */
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -240,6 +242,28 @@
             cursor: pointer;
             font-size: 1.9rem;
             color: #000000;
+        }
+
+        /* Media queries for responsive design */
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            .card {
+                width: calc(50% - 20px);
+            }
+
+            .store-card {
+                width: calc(100% - 20px);
+            }
+
+            .chat-popup {
+                width: calc(100% - 40px);
+                bottom: 10px;
+                right: 10px;
+            }
         }
     </style>
 </head>
