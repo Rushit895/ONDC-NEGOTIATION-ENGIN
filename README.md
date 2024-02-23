@@ -30,7 +30,9 @@ No installation is required. Simply open the `index.html` file in a web browser 
 
 ## Demo
 
-![ONDC Negotiation Engine Demo](demo.png)
+![ONDC Negotiation Engine Demo](Screenshots/demo1.png)
+![ONDC Negotiation Engine Demo](Screenshots/demo2.png)
+![ONDC Negotiation Engine Demo](Screenshots/demo3.png)
 
 ## Contributing
 
